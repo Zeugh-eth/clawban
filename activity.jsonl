@@ -1,0 +1,34 @@
+{"timestamp":"2026-03-09T17:19:01Z","agent":"cta","action":"created","task_id":"CLAW-001","detail":"Test Clawban: walk a task through all statuses"}
+{"timestamp":"2026-03-09T17:19:01Z","agent":"cta","action":"created","task_id":"CLAW-002","detail":"Test Clawban: walk a task through all statuses"}
+{"timestamp":"2026-03-09T17:19:01Z","agent":"cta","action":"created","task_id":"CLAW-003","detail":"Test Clawban: walk a task through all statuses"}
+{"timestamp":"2026-03-09T17:19:01Z","agent":"cta","action":"created","task_id":"CLAW-004","detail":"Test Clawban: walk a task through all statuses"}
+{"timestamp":"2026-03-09T17:19:02Z","agent":"cta","action":"created","task_id":"CLAW-005","detail":"Test Clawban: walk a task through all statuses"}
+{"timestamp":"2026-03-09T17:19:09Z","agent":"cta","action":"status_change","task_id":"CLAW-002","detail":"planning"}
+{"timestamp":"2026-03-09T17:19:09Z","agent":"cta","action":"commented","task_id":"CLAW-002","detail":"Starting Clawban test. Reading the board and understanding the workflow."}
+{"timestamp":"2026-03-09T17:19:09Z","agent":"cta","action":"status_change","task_id":"CLAW-002","detail":"in progress"}
+{"timestamp":"2026-03-09T17:19:09Z","agent":"cta","action":"commented","task_id":"CLAW-002","detail":"Walking through statuses. CLI works great — status changes, comments, and feed all functional."}
+{"timestamp":"2026-03-09T17:19:09Z","agent":"cta","action":"status_change","task_id":"CLAW-002","detail":"review"}
+{"timestamp":"2026-03-09T17:19:09Z","agent":"cta","action":"commented","task_id":"CLAW-002","detail":"All status transitions tested. Reading back my own comments to verify — looks clean."}
+{"timestamp":"2026-03-09T17:19:09Z","agent":"cta","action":"status_change","task_id":"CLAW-002","detail":"complete"}
+{"timestamp":"2026-03-09T17:19:10Z","agent":"cta","action":"commented","task_id":"CLAW-002","detail":"Test complete. Clawban is fully operational for CTA."}
+{"timestamp":"2026-03-09T17:20:43Z","agent":"system","action":"status_change","task_id":"CLAW-001","detail":"planning"}
+{"timestamp":"2026-03-09T17:20:43Z","agent":"main","action":"commented","task_id":"CLAW-001","detail":"PA here. Reviewing the Clawban system — clean setup CTA. Planning how to integrate this into my coordination workflow."}
+{"timestamp":"2026-03-09T17:20:43Z","agent":"system","action":"status_change","task_id":"CLAW-001","detail":"in progress"}
+{"timestamp":"2026-03-09T17:20:43Z","agent":"main","action":"commented","task_id":"CLAW-001","detail":"Walking through statuses now. This board will be useful for cross-agent task delegation — I can assign work to CTA/CRA/CMA and track it."}
+{"timestamp":"2026-03-09T17:20:43Z","agent":"system","action":"status_change","task_id":"CLAW-001","detail":"review"}
+{"timestamp":"2026-03-09T17:20:43Z","agent":"main","action":"commented","task_id":"CLAW-001","detail":"Verified all commands work: list, view, status, comment, my. The ClickUp import is a nice touch. Ready to close."}
+{"timestamp":"2026-03-09T17:20:43Z","agent":"system","action":"status_change","task_id":"CLAW-001","detail":"complete"}
+{"timestamp":"2026-03-09T17:20:43Z","agent":"main","action":"commented","task_id":"CLAW-001","detail":"Done. Clawban is operational. Will use this for Cabinet coordination going forward."}
+{"timestamp":"2026-03-09T17:21:30Z","agent":"system","action":"status_change","task_id":"CLAW-003","detail":"planning"}
+{"timestamp":"2026-03-09T17:21:30Z","agent":"system","action":"commented","task_id":"CLAW-003","detail":"CRA here — picking this up. Moving to planning. Reviewing the Clawban system for the first time."}
+{"timestamp":"2026-03-09T17:21:30Z","agent":"system","action":"status_change","task_id":"CLAW-003","detail":"in progress"}
+{"timestamp":"2026-03-09T17:21:30Z","agent":"system","action":"commented","task_id":"CLAW-003","detail":"In progress. Walking through the status flow as instructed. System feels clean — simple CLI, readable output."}
+{"timestamp":"2026-03-09T17:21:30Z","agent":"system","action":"status_change","task_id":"CLAW-003","detail":"review"}
+{"timestamp":"2026-03-09T17:21:30Z","agent":"system","action":"commented","task_id":"CLAW-003","detail":"Moving to review. All status transitions working. Comments persisting. Ready for CTA to verify."}
+{"timestamp":"2026-03-09T17:21:30Z","agent":"system","action":"status_change","task_id":"CLAW-003","detail":"complete"}
+{"timestamp":"2026-03-09T17:21:30Z","agent":"system","action":"commented","task_id":"CLAW-003","detail":"Complete. Full walkthrough done: to do → planning → in progress → review → complete. Clawban is operational on CRA's end. 🔬"}
+{"timestamp":"2026-03-09T17:30:29Z","agent":"cra","action":"created","task_id":"CLAW-006","detail":"Draft X thread: Compound domain incident × Anticapture Interface Hijack validation"}
+{"timestamp":"2026-03-09T17:34:07Z","agent":"system","action":"status_change","task_id":"CLAW-006","detail":"in progress"}
+{"timestamp":"2026-03-09T17:39:05Z","agent":"system","action":"commented","task_id":"CLAW-006","detail":"Posted to Moltbook (m/general). Post ID: e7093308. Includes dashboard link to anticapture.com and framework docs. X thread draft also ready for Zeugh's approval."}
+{"timestamp":"2026-03-09T17:39:05Z","agent":"system","action":"status_change","task_id":"CLAW-006","detail":"review"}
+{"timestamp":"2026-03-09T17:43:39Z","agent":"cra","action":"created","task_id":"CLAW-007","detail":"LEARNING: Never restart gateway without Zeugh's permission"}
