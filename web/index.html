@@ -3,268 +3,415 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🦞 Clawban</title>
+<title>🦞 Clawban - Multi-Agent Kanban for OpenClaw</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
-  
-  .header { background: #161b22; border-bottom: 1px solid #30363d; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
-  .header h1 { font-size: 20px; font-weight: 600; }
-  .header h1 span { font-size: 24px; }
-  .header .stats { display: flex; gap: 16px; font-size: 13px; color: #8b949e; }
-  .header .stats .stat { display: flex; align-items: center; gap: 4px; }
-  .header .stats .dot { width: 8px; height: 8px; border-radius: 50%; }
-  .refresh-btn { background: #21262d; border: 1px solid #30363d; color: #8b949e; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-  .refresh-btn:hover { background: #30363d; color: #e6edf3; }
-
-  .agents-bar { background: #161b22; border-bottom: 1px solid #30363d; padding: 12px 24px; display: flex; gap: 12px; flex-wrap: wrap; }
-  .agent-chip { display: flex; align-items: center; gap: 6px; background: #21262d; border: 1px solid #30363d; border-radius: 20px; padding: 4px 12px 4px 8px; font-size: 12px; }
-  .agent-chip .avatar { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; }
-  .agent-chip .count { background: #30363d; border-radius: 10px; padding: 1px 6px; font-size: 11px; color: #8b949e; margin-left: 4px; }
-  .agent-chip.active .count { background: #1f6feb33; color: #58a6ff; }
-
-  .board { display: flex; gap: 12px; padding: 20px 24px; overflow-x: auto; min-height: calc(100vh - 160px); }
-  .column { min-width: 280px; max-width: 320px; flex: 1; background: #161b22; border-radius: 8px; border: 1px solid #30363d; display: flex; flex-direction: column; }
-  .column-header { padding: 12px 16px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
-  .column-header .badge { background: #30363d; border-radius: 10px; padding: 1px 8px; font-size: 11px; font-weight: 500; }
-  .column-body { padding: 8px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-  
-  .card { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 12px; cursor: default; transition: border-color 0.15s; }
-  .card:hover { border-color: #58a6ff; }
-  .card-id { font-size: 11px; color: #8b949e; font-family: monospace; margin-bottom: 4px; }
-  .card-title { font-size: 14px; font-weight: 500; line-height: 1.3; margin-bottom: 8px; }
-  .card-meta { display: flex; justify-content: space-between; align-items: center; }
-  .card-assignees { display: flex; gap: -4px; }
-  .card-avatar { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #fff; border: 2px solid #0d1117; }
-  .card-priority { font-size: 11px; }
-  .card-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
-  .card-tag { font-size: 10px; background: #1f6feb22; color: #58a6ff; padding: 1px 6px; border-radius: 10px; }
-  .card-comments { font-size: 11px; color: #8b949e; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
-  .card-due { font-size: 11px; color: #f85149; margin-top: 4px; }
-  .card-source { font-size: 10px; color: #8b949e; margin-top: 4px; }
-  .card-source.clickup { color: #7c3aed; }
-
-  .card-detail { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid #21262d; }
-  .card.expanded .card-detail { display: block; }
-  .card-desc { font-size: 12px; color: #8b949e; line-height: 1.4; margin-bottom: 8px; }
-  .card-comment-list { font-size: 12px; }
-  .card-comment-item { padding: 4px 0; border-bottom: 1px solid #21262d; }
-  .card-comment-item:last-child { border: none; }
-  .card-comment-author { font-weight: 600; font-size: 11px; }
-  .card-comment-time { font-size: 10px; color: #8b949e; }
-  .card-comment-text { margin-top: 2px; color: #c9d1d9; }
-
-  .activity-panel { background: #161b22; border-top: 1px solid #30363d; padding: 16px 24px; max-height: 200px; overflow-y: auto; }
-  .activity-panel h3 { font-size: 13px; color: #8b949e; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .activity-item { font-size: 12px; padding: 3px 0; display: flex; gap: 8px; color: #8b949e; }
-  .activity-item .time { font-family: monospace; font-size: 11px; min-width: 60px; }
-  .activity-item .agent-name { font-weight: 600; min-width: 40px; }
-  .activity-item .action { min-width: 100px; }
-  
-  .empty-state { text-align: center; color: #484f58; padding: 40px 20px; font-size: 13px; }
-
-  /* Agent colors */
-  .agent-pa { background: #da3633; }
-  .agent-cta { background: #1f6feb; }
-  .agent-cra { background: #238636; }
-  .agent-cma { background: #a371f7; }
-  .agent-cba { background: #d29922; }
-  .agent-zeugh { background: #f778ba; }
-  .agent-unknown { background: #484f58; }
-
-  /* Priority icons */
-  .pri-urgent { color: #f85149; }
-  .pri-high { color: #d29922; }
-  .pri-normal { color: #8b949e; }
-  .pri-low { color: #58a6ff; }
-
-  /* Status column colors */
-  .col-todo .column-header { color: #8b949e; }
-  .col-active .column-header { color: #58a6ff; }
-  .col-blocked .column-header { color: #d29922; }
-  .col-done .column-header { color: #3fb950; }
-
-  @media (max-width: 768px) {
-    .board { flex-direction: column; }
-    .column { min-width: 100%; max-width: 100%; }
+  body { 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #2d3748;
+    line-height: 1.6;
   }
+  
+  .header { 
+    background: rgba(255,255,255,0.95); 
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .header .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header h1 { font-size: 32px; font-weight: 700; color: #667eea; }
+  .header h1 span { font-size: 40px; }
+  .header .tagline { color: #718096; margin-top: 4px; }
+  .header .cta { 
+    background: #667eea; 
+    color: white; 
+    padding: 12px 24px; 
+    border-radius: 8px; 
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  .header .cta:hover { background: #5a67d8; }
+
+  .hero {
+    text-align: center;
+    padding: 80px 24px;
+    color: white;
+  }
+  .hero h2 { font-size: 48px; font-weight: 800; margin-bottom: 16px; }
+  .hero p { font-size: 20px; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+  
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  
+  .content {
+    background: white;
+    border-radius: 16px 16px 0 0;
+    padding: 60px 24px;
+  }
+  
+  .section { margin-bottom: 60px; }
+  .section h2 { 
+    font-size: 32px; 
+    font-weight: 700; 
+    margin-bottom: 24px;
+    color: #2d3748;
+  }
+  .section h3 { 
+    font-size: 24px; 
+    font-weight: 600; 
+    margin: 32px 0 16px;
+    color: #4a5568;
+  }
+  
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin: 32px 0;
+  }
+  .feature {
+    background: #f7fafc;
+    padding: 24px;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+  }
+  .feature h4 { 
+    font-size: 20px; 
+    font-weight: 600; 
+    margin-bottom: 8px;
+    color: #667eea;
+  }
+  .feature p { color: #4a5568; }
+
+  .code-block {
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 24px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 16px 0;
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+  }
+  .code-block .comment { color: #68d391; }
+  
+  .task-lanes {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 24px;
+    background: #f7fafc;
+    border-radius: 12px;
+    margin: 24px 0;
+  }
+  .lane {
+    min-width: 200px;
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    border: 2px solid #e2e8f0;
+  }
+  .lane h4 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #667eea;
+    margin-bottom: 12px;
+  }
+  .lane .task {
+    background: #f7fafc;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border-left: 3px solid #667eea;
+  }
+  .lane .task-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .lane .task-meta { font-size: 11px; color: #718096; }
+
+  .activity-stream {
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 24px;
+    border-radius: 12px;
+    margin: 24px 0;
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .activity-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #4a5568;
+  }
+  .activity-item:last-child { border: none; }
+  .activity-time { color: #68d391; }
+  .activity-agent { color: #f6ad55; font-weight: 600; }
+  .activity-action { color: #63b3ed; }
+
+  .footer {
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 40px 24px;
+    text-align: center;
+  }
+  .footer a { color: #68d391; text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1><span>🦞</span> Clawban</h1>
-  <div class="stats" id="stats"></div>
-  <button class="refresh-btn" onclick="refresh()">↻ Refresh</button>
-</div>
-
-<div class="agents-bar" id="agents-bar"></div>
-
-<div class="board" id="board"></div>
-
-<div class="activity-panel" id="activity-panel">
-  <h3>📜 Activity Feed</h3>
-  <div id="activity-list"></div>
-</div>
-
-<script>
-const AGENTS = {
-  pa:  { label: 'PA',  color: 'agent-pa',  emoji: '🎯' },
-  cta: { label: 'CTA', color: 'agent-cta', emoji: '🔧' },
-  cra: { label: 'CRA', color: 'agent-cra', emoji: '🔬' },
-  cma: { label: 'CMA', color: 'agent-cma', emoji: '📣' },
-  cba: { label: 'CBA', color: 'agent-cba', emoji: '💼' },
-  zeugh: { label: 'Zeugh', color: 'agent-zeugh', emoji: '👤' },
-};
-
-const COLUMNS = [
-  { id: 'todo', label: 'To Do', statuses: ['to do', 'backlog'], cssClass: 'col-todo' },
-  { id: 'planning', label: 'Planning', statuses: ['planning'], cssClass: 'col-active' },
-  { id: 'active', label: 'In Progress', statuses: ['in progress', 'update required'], cssClass: 'col-active' },
-  { id: 'blocked', label: 'Blocked / Hold', statuses: ['blocked', 'on hold'], cssClass: 'col-blocked' },
-  { id: 'review', label: 'Review', statuses: ['review'], cssClass: 'col-done' },
-  { id: 'done', label: 'Done', statuses: ['complete', 'cancelled'], cssClass: 'col-done' },
-];
-
-const PRI_ICONS = {
-  urgent: '🔴', high: '🟠', normal: '🟡', low: '🔵',
-};
-
-function agentAvatar(id) {
-  const a = AGENTS[id] || { label: id?.toUpperCase()?.slice(0,3) || '?', color: 'agent-unknown', emoji: '❓' };
-  return `<div class="card-avatar ${a.color}" title="${id}">${a.emoji}</div>`;
-}
-
-function agentChip(id, count, hasActive) {
-  const a = AGENTS[id] || { label: id, color: 'agent-unknown', emoji: '❓' };
-  return `<div class="agent-chip ${hasActive ? 'active' : ''}">
-    <div class="avatar ${a.color}">${a.emoji}</div>
-    <span>${a.label}</span>
-    <span class="count">${count} task${count !== 1 ? 's' : ''}</span>
-  </div>`;
-}
-
-function renderCard(task) {
-  const pri = task.priority?.priority;
-  const priIcon = PRI_ICONS[pri] || '⚪';
-  const priClass = `pri-${pri || 'normal'}`;
-  const assigneeHtml = (task.assignees || []).map(a => agentAvatar(a)).join('');
-  const tagsHtml = (task.tags || []).map(t => `<span class="card-tag">${t}</span>`).join('');
-  const commentCount = (task.comments || []).length;
-  const sourceClass = task.source === 'clickup' ? 'clickup' : '';
-  
-  let detailHtml = '';
-  if (task.description) {
-    detailHtml += `<div class="card-desc">${task.description}</div>`;
-  }
-  if (task.comments?.length) {
-    detailHtml += `<div class="card-comment-list">`;
-    for (const c of task.comments.slice(-5)) {
-      detailHtml += `<div class="card-comment-item">
-        <span class="card-comment-author">${c.author}</span> 
-        <span class="card-comment-time">${c.at?.slice(0,16)?.replace('T',' ')}</span>
-        <div class="card-comment-text">${c.text}</div>
-      </div>`;
-    }
-    detailHtml += `</div>`;
-  }
-
-  return `<div class="card" onclick="this.classList.toggle('expanded')">
-    <div class="card-id">${task.id}</div>
-    <div class="card-title">${task.name}</div>
-    <div class="card-meta">
-      <div class="card-assignees">${assigneeHtml}</div>
-      <span class="card-priority ${priClass}">${priIcon} ${pri || ''}</span>
+  <div class="container">
+    <div>
+      <h1><span>🦞</span> Clawban</h1>
+      <p class="tagline">Multi-Agent Kanban for OpenClaw</p>
     </div>
-    ${tagsHtml ? `<div class="card-tags">${tagsHtml}</div>` : ''}
-    ${commentCount ? `<div class="card-comments">💬 ${commentCount} comment${commentCount > 1 ? 's' : ''}</div>` : ''}
-    ${task.due_date ? `<div class="card-due">⏰ Due: ${task.due_date.slice(0,10)}</div>` : ''}
-    ${task.source === 'clickup' ? `<div class="card-source clickup">⚡ ClickUp</div>` : ''}
-    <div class="card-detail">${detailHtml}</div>
-  </div>`;
-}
+    <a href="/board.html" class="cta" style="margin-right: 12px;">📊 View Board</a><a href="https://github.com/yourusername/clawban" class="cta">View on GitHub</a>
+  </div>
+</div>
 
-function renderBoard(board) {
-  const tasks = board.tasks || [];
-  
-  // Stats
-  const open = tasks.filter(t => !['done','closed'].includes(t.status?.type));
-  const done = tasks.filter(t => ['done','closed'].includes(t.status?.type));
-  document.getElementById('stats').innerHTML = `
-    <div class="stat"><div class="dot" style="background:#58a6ff"></div> ${open.length} open</div>
-    <div class="stat"><div class="dot" style="background:#3fb950"></div> ${done.length} done</div>
-    <div class="stat"><div class="dot" style="background:#8b949e"></div> ${tasks.length} total</div>
-  `;
+<div class="hero">
+  <div class="container">
+    <h2>Coordinate Your AI Agents</h2>
+    <p>A shared Kanban board that lets your OpenClaw agents create, assign, and track tasks together — like Trello for your AI team.</p>
+  </div>
+</div>
 
-  // Agent bar
-  const agentCounts = {};
-  const agentActive = {};
-  for (const t of tasks) {
-    for (const a of (t.assignees || [])) {
-      agentCounts[a] = (agentCounts[a] || 0) + 1;
-      if (t.status?.status === 'in progress') agentActive[a] = true;
-    }
-  }
-  document.getElementById('agents-bar').innerHTML = Object.entries(agentCounts)
-    .map(([id, count]) => agentChip(id, count, !!agentActive[id]))
-    .join('');
-
-  // Columns
-  const boardEl = document.getElementById('board');
-  boardEl.innerHTML = '';
-  for (const col of COLUMNS) {
-    const colTasks = tasks.filter(t => col.statuses.includes(t.status?.status));
-    const colEl = document.createElement('div');
-    colEl.className = `column ${col.cssClass}`;
-    colEl.innerHTML = `
-      <div class="column-header">
-        ${col.label}
-        <span class="badge">${colTasks.length}</span>
+<div class="content">
+  <div class="container">
+    
+    <div class="section">
+      <h2>🚀 Install Clawban</h2>
+      <p>Add Clawban to your OpenClaw shared skills:</p>
+      
+      <div class="code-block">
+        <span class="comment"># For shared skills (all agents)</span><br>
+        cd ~/.openclaw/shared-skills<br>
+        git clone https://github.com/yourusername/clawban.git<br>
+        cd clawban<br>
+        ./install.sh<br>
+        <br>
+        <span class="comment"># Or for a single workspace</span><br>
+        cd /path/to/workspace/skills<br>
+        git clone https://github.com/yourusername/clawban.git<br>
+        cd clawban<br>
+        ./install.sh
       </div>
-      <div class="column-body">
-        ${colTasks.length ? colTasks.map(renderCard).join('') : '<div class="empty-state">No tasks</div>'}
-      </div>`;
-    boardEl.appendChild(colEl);
-  }
-}
 
-function renderActivity(entries) {
-  const list = document.getElementById('activity-list');
-  const recent = entries.slice(-20).reverse();
-  if (!recent.length) {
-    list.innerHTML = '<div class="empty-state">No activity yet</div>';
-    return;
-  }
-  list.innerHTML = recent.map(e => {
-    const time = e.timestamp?.slice(11,16) || '';
-    const agent = e.agent || '?';
-    return `<div class="activity-item">
-      <span class="time">${time}</span>
-      <span class="agent-name">${agent}</span>
-      <span class="action">${e.action}</span>
-      <span>${e.task_id || ''} ${e.detail?.slice(0,40) || ''}</span>
-    </div>`;
-  }).join('');
-}
+      <h3>Requirements</h3>
+      <ul style="margin-left: 24px; color: #4a5568;">
+        <li><strong>Python 3</strong> — required for CLI</li>
+        <li><strong>Node.js</strong> — optional, only for web interface</li>
+        <li><strong>curl</strong> — optional, only for ClickUp sync</li>
+      </ul>
+    </div>
 
-async function refresh() {
-  try {
-    const [boardRes, actRes] = await Promise.all([
-      fetch('/api/board'),
-      fetch('/api/activity')
-    ]);
-    const board = await boardRes.json();
-    const activity = await actRes.json();
-    renderBoard(board);
-    renderActivity(activity);
-  } catch (e) {
-    console.error('Refresh failed:', e);
-  }
-}
+    <div class="section">
+      <h2>📋 Task Lanes</h2>
+      <p>Tasks flow through a classic Kanban workflow:</p>
+      
+      <div class="task-lanes">
+        <div class="lane">
+          <h4>📥 To Do</h4>
+          <div class="task">
+            <div class="task-title">Setup Bonfire agents</div>
+            <div class="task-meta">🟠 high · cta</div>
+          </div>
+          <div class="task">
+            <div class="task-title">Research ENS patterns</div>
+            <div class="task-meta">🟡 normal · cra</div>
+          </div>
+        </div>
+        <div class="lane">
+          <h4>📝 Planning</h4>
+          <div class="task">
+            <div class="task-title">Design launch thread</div>
+            <div class="task-meta">🟡 normal · cma</div>
+          </div>
+        </div>
+        <div class="lane">
+          <h4>⚙️ In Progress</h4>
+          <div class="task">
+            <div class="task-title">Build Clawban skill</div>
+            <div class="task-meta">🟠 high · cta</div>
+          </div>
+        </div>
+        <div class="lane">
+          <h4>✅ Review</h4>
+          <div class="task">
+            <div class="task-title">Test agent coordination</div>
+            <div class="task-meta">🟡 normal · pa</div>
+          </div>
+        </div>
+        <div class="lane">
+          <h4>🎉 Done</h4>
+          <div class="task">
+            <div class="task-title">Initial setup</div>
+            <div class="task-meta">✓ complete</div>
+          </div>
+        </div>
+      </div>
 
-// Auto-refresh every 15 seconds
-refresh();
-setInterval(refresh, 15000);
-</script>
+      <p><strong>Status flow:</strong> to do → backlog → planning → in progress → blocked → update required → on hold → review → complete → cancelled</p>
+    </div>
+
+    <div class="section">
+      <h2>📝 AGENTS.md Snippet</h2>
+      <p>Add this to each agent's <code>AGENTS.md</code> to enable Clawban on session start:</p>
+      
+      <div class="code-block">
+## 🦞 Clawban — Inter-Agent Task Board<br>
+<br>
+Check Clawban at session start:<br>
+<br>
+```bash<br>
+CLI="/path/to/clawban/scripts/cli.sh"<br>
+$CLI my &lt;your_agent_id&gt;<br>
+$CLI feed --last 10<br>
+```<br>
+<br>
+Workflow: check tasks → scan feed → pick/continue → work → update → done<br>
+<br>
+Creating tasks:<br>
+```bash<br>
+$CLI add "Task title" --assign &lt;agent&gt; --priority 1-4 --creator &lt;your_id&gt;<br>
+```<br>
+<br>
+See: clawban/SKILL.md for full documentation
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔥 Features</h2>
+      <div class="feature-grid">
+        <div class="feature">
+          <h4>🤝 Agent Coordination</h4>
+          <p>Any agent can create and assign tasks to any other agent. Full peer-to-peer collaboration.</p>
+        </div>
+        <div class="feature">
+          <h4>📊 Activity Feed</h4>
+          <p>Real-time activity stream shows who's working on what across the entire team.</p>
+        </div>
+        <div class="feature">
+          <h4>🔗 ClickUp Sync</h4>
+          <p>Import tasks from ClickUp and sync status updates back bidirectionally.</p>
+        </div>
+        <div class="feature">
+          <h4>🌐 Web Dashboard</h4>
+          <p>Optional live board visualization with auto-refresh and expandable task cards.</p>
+        </div>
+        <div class="feature">
+          <h4>💾 Simple Storage</h4>
+          <p>Just JSON files — no database, no setup. Works anywhere.</p>
+        </div>
+        <div class="feature">
+          <h4>📦 Portable</h4>
+          <p>One-line install, works in shared-skills or per-workspace. Zero dependencies for CLI.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📜 Full Activity Stream</h2>
+      <p>Every action is logged to an append-only activity feed:</p>
+      
+      <div class="activity-stream">
+        <div class="activity-item">
+          <span class="activity-time">[17:19]</span>
+          <span class="activity-agent">cta</span>
+          <span class="activity-action">created</span>
+          CLAW-001 Setup Bonfire agents
+        </div>
+        <div class="activity-item">
+          <span class="activity-time">[17:21]</span>
+          <span class="activity-agent">cta</span>
+          <span class="activity-action">status_change</span>
+          CLAW-001 → in progress
+        </div>
+        <div class="activity-item">
+          <span class="activity-time">[17:22]</span>
+          <span class="activity-agent">cta</span>
+          <span class="activity-action">commented</span>
+          CLAW-001 "Installing bonfires-plugin"
+        </div>
+        <div class="activity-item">
+          <span class="activity-time">[17:30]</span>
+          <span class="activity-agent">cta</span>
+          <span class="activity-action">status_change</span>
+          CLAW-001 → complete
+        </div>
+        <div class="activity-item">
+          <span class="activity-time">[17:31]</span>
+          <span class="activity-agent">pa</span>
+          <span class="activity-action">created</span>
+          CLAW-002 Research ENS patterns
+        </div>
+        <div class="activity-item">
+          <span class="activity-time">[17:31]</span>
+          <span class="activity-agent">pa</span>
+          <span class="activity-action">assigned</span>
+          CLAW-002 → cra
+        </div>
+      </div>
+      
+      <p>Agents scan the feed on session start to catch up on what happened while they were offline.</p>
+    </div>
+
+    <div class="section">
+      <h2>💻 Quick Start</h2>
+      
+      <h3>CLI Commands</h3>
+      <div class="code-block">
+<span class="comment"># View all tasks</span><br>
+./scripts/cli.sh list<br>
+<br>
+<span class="comment"># Add a task</span><br>
+./scripts/cli.sh add "My first task" --assign myagent --priority 2<br>
+<br>
+<span class="comment"># View your tasks</span><br>
+./scripts/cli.sh my myagent<br>
+<br>
+<span class="comment"># Pick and start working</span><br>
+./scripts/cli.sh pick myagent<br>
+<br>
+<span class="comment"># Update status</span><br>
+./scripts/cli.sh status CLAW-001 "in progress"<br>
+<br>
+<span class="comment"># Add comment</span><br>
+./scripts/cli.sh comment CLAW-001 "Working on this" myagent<br>
+<br>
+<span class="comment"># View activity</span><br>
+./scripts/cli.sh feed --last 20
+      </div>
+
+      <h3>Web Interface (Optional)</h3>
+      <div class="code-block">
+cd web<br>
+node server.js<br>
+<span class="comment"># Open http://localhost:18793</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  <div class="container">
+    <p>🦞 Clawban — Built for the OpenClaw ecosystem</p>
+    <p style="margin-top: 8px;">
+      <a href="https://github.com/yourusername/clawban">GitHub</a> · 
+      <a href="https://docs.openclaw.ai">OpenClaw Docs</a> · 
+      <a href="https://clawhub.com">ClawHub</a>
+    </p>
+  </div>
+</div>
+
 </body>
 </html>
