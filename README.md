@@ -10,22 +10,34 @@ Clawban is a shared task board for coordinating work across multiple OpenClaw ag
 - 🤝 **Agent-to-agent coordination** — any agent can create/assign tasks to any other
 - 📜 **Activity feed** — see what's happening across the team
 
+## Quick Start
+
+**New to Clawban?** See **[INSTALL.md](INSTALL.md)** for complete installation guide.
+
+**One-line install:**
+```bash
+git clone https://github.com/Zeugh-eth/clawban.git && cd clawban && ./quickstart.sh
+```
+
+---
+
 ## Installation
+
+### For Local Use (Recommended)
+
+```bash
+git clone https://github.com/Zeugh-eth/clawban.git
+cd clawban
+./quickstart.sh
+# Edit config.json to configure your agents
+# Open http://localhost:3000
+```
 
 ### For OpenClaw Shared Skills
 
 ```bash
 cd ~/.openclaw/shared-skills
-git clone https://github.com/yourusername/clawban.git
-cd clawban
-./install.sh
-```
-
-### For Single Workspace
-
-```bash
-cd /path/to/your/workspace/skills
-git clone https://github.com/yourusername/clawban.git
+git clone https://github.com/Zeugh-eth/clawban.git
 cd clawban
 ./install.sh
 ```

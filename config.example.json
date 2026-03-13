@@ -1,0 +1,61 @@
+{
+  "agents": [
+    {
+      "id": "main",
+      "name": "Main Agent",
+      "emoji": "🤖",
+      "role": "General Assistant",
+      "description": "Primary agent handling general tasks"
+    },
+    {
+      "id": "tech",
+      "name": "Tech Agent",
+      "emoji": "🔧",
+      "role": "Engineering",
+      "description": "Handles technical tasks and infrastructure"
+    },
+    {
+      "id": "research",
+      "name": "Research Agent",
+      "emoji": "📚",
+      "role": "Research",
+      "description": "Deep research and analysis"
+    }
+  ],
+  
+  "board": {
+    "path": "./board.json",
+    "activityLog": "./activity.jsonl",
+    "autoSave": true,
+    "backupInterval": 3600,
+    "lockTimeout": 5000
+  },
+  
+  "server": {
+    "port": 3000,
+    "host": "localhost",
+    "cors": true,
+    "maxBodySize": "10mb"
+  },
+  
+  "clickup": {
+    "enabled": false,
+    "apiKey": "",
+    "workspaceId": "",
+    "listId": "",
+    "syncInterval": 300
+  },
+  
+  "ui": {
+    "theme": "light",
+    "defaultView": "kanban",
+    "showEmoji": true,
+    "compactMode": false
+  },
+  
+  "notifications": {
+    "enabled": false,
+    "webhook": "",
+    "events": ["task_created", "status_changed", "assignment_changed"]
+  }
+}

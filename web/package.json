@@ -1,0 +1,19 @@
+{
+  "name": "clawban-dashboard",
+  "version": "1.0.0",
+  "description": "Clawban task board dashboard for multi-agent teams",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server-simple.js",
+    "dev": "node server-simple.js",
+    "server": "node server.js",
+    "test": "echo 'No tests yet'"
+  },
+  "keywords": ["task-board", "kanban", "agents", "openclaw"],
+  "author": "Clop Cabinet",
+  "license": "MIT",
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
