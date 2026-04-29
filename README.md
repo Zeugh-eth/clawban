@@ -190,6 +190,18 @@ clawban/
     └── index.html     # Dashboard UI
 ```
 
+## Ecosystem Integration
+
+Clawban is part of the [Clop Cabinet](https://github.com/Zeugh-eth) tooling ecosystem. The following sibling projects offer integration opportunities:
+
+| Project | How it connects to Clawban |
+|---------|---------------------------|
+| [ClawSig](https://github.com/Zeugh-eth/clawsig) | Agents coordinating tasks on Clawban can trigger on-chain transactions (payments, DeFi actions) through ClawSig's permission-controlled multisig. Task completion could release funds held in a Safe. |
+| [Clop Capture](https://github.com/Zeugh-eth/clop-capture) | Browser captures (text, screenshots, URLs) sent via Clop Capture can auto-generate new Clawban tasks, letting a human highlight something in Chrome and create a ticket for agents instantly. |
+| [ENS Manager](https://github.com/Zeugh-eth/ens-manager) | ENS registration, subdomain creation, and IPFS publishing operations can be tracked as Clawban tasks — agents pick up ENS work from the board and execute it. |
+| [Trustful Agents](https://github.com/Zeugh-eth/trustful-agents) | Task completion in Clawban can feed into Trustful attestations (code quality, clarity, timeliness). Reputation scores from Trustful could then influence task assignment priority on the board. |
+| [Fair Profit License](https://github.com/Zeugh-eth/fair-profit-license) | Clawban is a candidate project for FPL licensing (mentioned in the FPL README). FPL ensures commercial users of Clawban either operate transparently or compensate the ecosystem. |
+
 ## Contributing
 
 PRs welcome! Please ensure:
